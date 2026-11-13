@@ -542,7 +542,31 @@
       .contact-email a { font-weight: 600; overflow-wrap: anywhere; }
 
       /* ---------- Check Wallet ---------- */
-      .cw-connect { padding: 10px 22px; font-size: 15px; }
+      .paste-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+      }
+      .addr-input {
+        flex: 1 1 260px;
+        min-width: 0;
+        font-family: var(--mono);
+        font-size: 14.5px;
+        color: var(--ink);
+        background: var(--bg-deep);
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 10px 16px;
+        outline: none;
+      }
+      .addr-input::placeholder { color: var(--ink-soft); }
+      .addr-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(47, 230, 167, 0.18); }
+      .cw-err {
+        color: #ff7a7a;
+        font-size: 14px;
+        margin: 10px 0 0;
+      }
       .cw-head {
         display: flex;
         flex-wrap: wrap;
@@ -1133,14 +1157,16 @@
         <div class="rule"></div>
         <div id="cwDisconnected">
           <p>
-            Hubungkan wallet untuk melihat saldo koin asli di 7 jaringan
-            EVM, BSC, Ethereum, Polygon, Arbitrum, Base, Optimism, dan
+            Tempel alamat wallet untuk melihat saldo koin asli di 7 jaringan
+            EVM: BSC, Ethereum, Polygon, Arbitrum, Base, Optimism, dan
             Robinhood Chain, semuanya dari satu alamat yang sama.
+            Tidak perlu menghubungkan wallet.
           </p>
-          <button class="wallet-btn cw-connect" id="cwConnectBtn" type="button">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>
-            <span>Connect Wallet</span>
-          </button>
+          <div class="paste-row">
+            <input class="addr-input" id="cwPasteInput" type="text" inputmode="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Tempel alamat wallet 0x…" aria-label="Alamat wallet">
+            <button class="wallet-btn" id="cwPasteBtn" type="button">Cek Saldo</button>
+          </div>
+          <p class="cw-err" id="cwPasteErr" role="status" hidden></p>
         </div>
         <div id="cwConnected" hidden>
           <div class="cw-head">
@@ -1341,7 +1367,6 @@
       /* ---------- Connect Wallet (EIP-1193 / window.ethereum) ---------- */
       var walletBtn = document.getElementById('walletBtn');
       var walletLabel = document.getElementById('walletBtnLabel');
-      var cwConnectBtn = document.getElementById('cwConnectBtn');
       var walletModal = document.getElementById('walletModal');
       var walletModalNote = document.getElementById('walletModalNote');
       var walletTiles = document.querySelectorAll('.wallet-tile');
@@ -1349,8 +1374,13 @@
       var cwConnected = document.getElementById('cwConnected');
       var cwAddress = document.getElementById('cwAddress');
       var walletAccount = null;
+      var pasteAddress = null;
       var activeProvider = null;
       var balancesFor = null;
+
+      function checkedAddress() {
+        return walletAccount || pasteAddress;
+      }
 
       function shortAddress(addr) {
         return addr.slice(0, 6) + '…' + addr.slice(-4);
@@ -1380,12 +1410,15 @@
         }
       }
       function renderCheckWallet() {
-        if (walletAccount) {
+        var addr = checkedAddress();
+        if (addr) {
           cwDisconnected.hidden = true;
           cwConnected.hidden = false;
-          cwAddress.textContent = shortAddress(walletAccount);
-          cwAddress.title = walletAccount;
-          if (balancesFor !== walletAccount) loadBalances();
+          cwAddress.textContent = shortAddress(addr);
+          cwAddress.title = addr;
+          cwConnected.querySelector('.status').textContent = walletAccount ? 'Terhubung' : 'Alamat ditempel';
+          document.getElementById('cwDisconnectBtn').textContent = walletAccount ? 'Putuskan' : 'Alamat lain';
+          if (balancesFor !== addr) loadBalances();
         } else {
           cwDisconnected.hidden = false;
           cwConnected.hidden = true;
@@ -1394,11 +1427,18 @@
       }
       function setAccount(addr) {
         walletAccount = addr || null;
+        if (walletAccount) pasteAddress = null;
         renderWallet();
         renderCheckWallet();
       }
 
       function disconnectWallet() {
+        // Mode tempel alamat: cukup kembali ke form, tidak ada koneksi wallet.
+        if (pasteAddress && !walletAccount) {
+          pasteAddress = null;
+          renderCheckWallet();
+          return;
+        }
         // Putuskan tampilan di halaman ini; cabut juga izin bila wallet mendukungnya.
         var provider = activeProvider || window.ethereum;
         if (provider && provider.request) {
@@ -1576,20 +1616,39 @@
         if (walletAccount) disconnectWallet();
         else openWalletModal();
       });
-      cwConnectBtn.addEventListener('click', openWalletModal);
+      /* ---------- Check Wallet: tempel alamat, tanpa connect ---------- */
+      var cwPasteInput = document.getElementById('cwPasteInput');
+      var cwPasteBtn = document.getElementById('cwPasteBtn');
+      var cwPasteErr = document.getElementById('cwPasteErr');
+      function checkPastedAddress() {
+        var raw = cwPasteInput.value.replace(/\s+/g, '');
+        if (!/^0x[0-9a-fA-F]{40}$/.test(raw)) {
+          cwPasteErr.textContent = 'Alamat tidak valid. Tempel alamat wallet yang diawali 0x dan panjangnya 42 karakter.';
+          cwPasteErr.hidden = false;
+          return;
+        }
+        cwPasteErr.hidden = true;
+        pasteAddress = raw;
+        renderCheckWallet();
+      }
+      cwPasteBtn.addEventListener('click', checkPastedAddress);
+      cwPasteInput.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') checkPastedAddress();
+      });
       document.getElementById('cwDisconnectBtn').addEventListener('click', disconnectWallet);
       document.getElementById('cwRefreshBtn').addEventListener('click', function () {
         loadBalances();
       });
       var cwCopyBtn = document.getElementById('cwCopyBtn');
       cwCopyBtn.addEventListener('click', function () {
-        if (!walletAccount) return;
+        var addr = checkedAddress();
+        if (!addr) return;
         function doneCopy() {
           cwCopyBtn.textContent = 'Tersalin ✓';
           setTimeout(function () { cwCopyBtn.textContent = 'Salin Alamat'; }, 1800);
         }
         if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(walletAccount).then(doneCopy, function () { /* diam saja */ });
+          navigator.clipboard.writeText(addr).then(doneCopy, function () { /* diam saja */ });
         }
       });
 
@@ -1649,8 +1708,8 @@
         return frac ? whole.toString() + '.' + frac : whole.toString();
       }
       function loadBalances() {
-        if (!walletAccount) return;
-        var addr = walletAccount;
+        var addr = checkedAddress();
+        if (!addr) return;
         balancesFor = addr;
         CHAINS.forEach(function (chain, i) {
           var el = document.getElementById('bal-' + i);
@@ -1668,13 +1727,13 @@
           })
             .then(function (r) { return r.json(); })
             .then(function (j) {
-              if (walletAccount !== addr) return;
+              if (checkedAddress() !== addr) return;
               if (!j || typeof j.result !== 'string') throw new Error('rpc');
               el.className = 'bal-amt';
               el.textContent = formatNative(j.result) + ' ' + chain.symbol;
             })
             .catch(function () {
-              if (walletAccount !== addr) return;
+              if (checkedAddress() !== addr) return;
               el.className = 'bal-amt error';
               el.textContent = 'Gagal dimuat';
             });
