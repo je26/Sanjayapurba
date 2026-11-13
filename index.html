@@ -323,6 +323,30 @@
         margin: 0;
         max-width: 58ch;
       }
+      .hero-cta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin: 22px 0 0;
+      }
+      .cta-btn {
+        display: inline-flex;
+        align-items: center;
+        font-family: var(--display);
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--ink);
+        background: transparent;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 9px 18px;
+        text-decoration: none;
+        white-space: nowrap;
+      }
+      .cta-btn:hover { color: var(--accent); border-color: rgba(47, 230, 167, 0.45); }
+      .cta-btn.primary { color: #04150e; background: var(--accent); border-color: var(--accent); }
+      .cta-btn.primary:hover { color: #04150e; filter: brightness(1.07); }
+      .cta-btn:active { transform: scale(0.97); }
       /* ---------- Sections ---------- */
       section { margin-top: 46px; }
       h2 {
@@ -435,6 +459,57 @@
         margin-bottom: 12px;
       }
       .tag.gold { color: var(--gold); background: rgba(240, 185, 11, 0.13); }
+
+      /* ---------- Tabel Bug Bounty ---------- */
+      .table-wrap {
+        overflow-x: auto;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: var(--surface);
+      }
+      .bounty-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 15.5px;
+        min-width: 420px;
+      }
+      .bounty-table th,
+      .bounty-table td {
+        padding: 13px 18px;
+        text-align: left;
+        border-bottom: 1px solid var(--line-soft);
+      }
+      .bounty-table thead th {
+        font-family: var(--mono);
+        font-size: 11.5px;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--accent);
+        background: var(--surface-2);
+      }
+      .bounty-table tbody tr:last-child td { border-bottom: none; }
+      .bounty-table tbody td:first-child { font-family: var(--display); font-weight: 700; }
+      .bounty-table tfoot td {
+        font-weight: 700;
+        border-bottom: none;
+        border-top: 1px solid var(--line);
+        background: var(--surface-2);
+      }
+      .status-pill {
+        display: inline-block;
+        font-family: var(--mono);
+        font-size: 11.5px;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--gold);
+        background: rgba(240, 185, 11, 0.13);
+        border-radius: 6px;
+        padding: 3px 9px;
+        white-space: nowrap;
+      }
+      .table-note { color: var(--ink-soft); font-size: 14.5px; margin-top: 12px; }
 
       .edu-card {
         background: var(--surface);
@@ -685,26 +760,6 @@
       }
       .wallet-modal-close:hover { color: var(--accent); border-color: rgba(47, 230, 167, 0.45); }
       .wallet-modal-close:active { transform: scale(0.95); }
-      .wallet-tabs {
-        display: flex;
-        gap: 4px;
-        background: var(--bg-deep);
-        border: 1px solid var(--line-soft);
-        border-radius: 12px;
-        padding: 4px;
-        margin-bottom: 18px;
-      }
-      .wallet-tab {
-        flex: 1;
-        text-align: center;
-        padding: 7px 0;
-        border-radius: 9px;
-        font-family: var(--display);
-        font-size: 14.5px;
-        font-weight: 700;
-        color: var(--ink-soft);
-      }
-      .wallet-tab.active { background: var(--accent); color: #04150e; }
       .wallet-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
@@ -871,6 +926,7 @@
             <ul class="nav-links">
               <li><a href="#tentang">Tentang</a></li>
               <li><a href="#portfolio">Portfolio</a></li>
+              <li><a href="#bug-bounty">Bug Bounty</a></li>
               <li><a href="#pengalaman">Pengalaman</a></li>
               <li><a href="#kontak">Kontak</a></li>
               <li><a href="#check-wallet">Check Wallet</a></li>
@@ -888,7 +944,11 @@
       <header id="atas">
         <p class="hero-label">Halo, perkenalkan</p>
         <h1 class="welcome">Nama saya <strong>Sanjaya Purba</strong>. Selamat datang di web pribadi saya</h1>
-        <p class="welcome-note">Senang Anda mampir, di sini saya berbagi portfolio, perjalanan kerja, dan pengalaman saya menjelajahi dunia Web3. Silakan lihat lihat dengan santai, semoga ada yang menginspirasi dan bermanfaat untuk Anda.</p>
+        <p class="welcome-note">Senang Anda mampir, di sini saya berbagi portfolio, perjalanan kerja, dan pengalaman saya menjelajahi dunia Web3. Silakan lihat-lihat dengan santai, semoga ada yang menginspirasi dan bermanfaat untuk Anda.</p>
+        <p class="hero-cta">
+          <a class="cta-btn primary" href="#portfolio">Lihat Portfolio</a>
+          <a class="cta-btn" href="#kontak">Hubungi Saya</a>
+        </p>
       </header>
 
       <!-- Tentang -->
@@ -899,7 +959,7 @@
           Saya lulusan S1 Sistem Informasi dengan pengalaman empat tahun
           sebagai Customer Service di Bank BRI. Selama bekerja di sana, saya
           terbiasa melayani nasabah secara langsung dan menggunakan sistem
-          perbankan dalam pekerjaan sehari hari.
+          perbankan dalam pekerjaan sehari-hari.
         </p>
         <p>
           Di dunia Web3, saya sudah lama aktif melakukan deploy contract dan
@@ -1020,6 +1080,53 @@
         </div>
       </section>
 
+      <!-- Bug Bounty -->
+      <section aria-labelledby="bug-bounty">
+        <h2 id="bug-bounty">Bug Bounty &amp; Riset Keamanan</h2>
+        <div class="rule"></div>
+        <p>
+          Pada November 2026 saya mulai mengikuti program bug bounty:
+          membaca kode, mencari celah keamanan, dan membuktikannya
+          dengan PoC sebelum melapor langsung ke tim keamanan tiap program.
+        </p>
+        <div class="table-wrap">
+          <table class="bounty-table">
+            <thead>
+              <tr>
+                <th>Program</th>
+                <th>Laporan</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Exponent</td>
+                <td>1 laporan</td>
+                <td><span class="status-pill">Dalam penilaian</span></td>
+              </tr>
+              <tr>
+                <td>Across</td>
+                <td>4 laporan · 5 temuan</td>
+                <td><span class="status-pill">Dalam penilaian</span></td>
+              </tr>
+              <tr>
+                <td>Relay</td>
+                <td>5 laporan</td>
+                <td><span class="status-pill">Dalam penilaian</span></td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td>Total</td>
+                <td>10 laporan · 11 temuan</td>
+                <td>—</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+        <p class="table-note">Detail temuan dirahasiakan sampai tiap program menyatakan selesai, sesuai aturan program.</p>
+      </section>
+
       <!-- Check Wallet -->
       <section aria-labelledby="check-wallet">
         <h2 id="check-wallet">Check Wallet</h2>
@@ -1060,7 +1167,7 @@
           emasnya. Ularnya menembus dinding: keluar di satu sisi, muncul
           lagi di sisi sebaliknya, jadi yang bikin kalah hanya menabrak
           badan sendiri. Jalannya santai dan kecepatannya naik
-          pelan pelan saja.
+          pelan-pelan saja.
         </p>
         <div class="game-card">
           <div class="game-hud">
@@ -1134,9 +1241,6 @@
           <button class="wallet-modal-close" id="walletModalClose" type="button" aria-label="Tutup pilihan wallet">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
           </button>
-        </div>
-        <div class="wallet-tabs" role="tablist" aria-label="Jenis jaringan">
-          <span class="wallet-tab active" role="tab" aria-selected="true">EVM</span>
         </div>
         <div class="wallet-grid">
           <button class="wallet-tile" type="button" data-wallet="metamask" data-name="MetaMask">
