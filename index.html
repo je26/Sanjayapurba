@@ -3,27 +3,71 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="color-scheme" content="dark" />
+    <meta name="color-scheme" content="dark light" />
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232fe6a7'/%3E%3Ctext x='32' y='42' text-anchor='middle' font-family='Arial, sans-serif' font-size='26' font-weight='800' fill='%2304150e'%3ESP%3C/text%3E%3Ccircle cx='52' cy='12' r='5' fill='%23f0b90b'/%3E%3C/svg%3E" />
     <title>Sanjaya Purba Landing Page Pribadi</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet" />
     <style>
+      /* Semantic design tokens (OKLCH, shadcn-style roles). Dark values
+         below are exact conversions of the page's original hex palette,
+         so the dark look is unchanged; light values follow in the
+         prefers-color-scheme block. Legacy --bg/--surface/... names are
+         kept as aliases so existing rules keep working. */
       :root {
-        --bg: #080b0e;
-        --bg-deep: #05070a;
-        --surface: #10161c;
-        --surface-2: #151d26;
-        --ink: #eef5f1;
-        --ink-soft: #9db0a6;
-        --line: #22302a;
-        --line-soft: #1a2420;
-        --accent: #2fe6a7;
-        --accent-dim: #1a3a2f;
-        --gold: #f0b90b;
+        --background: oklch(0.148 0.008 247);
+        --background-deep: oklch(0.127 0.009 254);
+        --card: oklch(0.197 0.015 249);
+        --card-2: oklch(0.227 0.021 252);
+        --foreground: oklch(0.964 0.009 161);
+        --muted-foreground: oklch(0.740 0.025 163);
+        --border: oklch(0.294 0.022 167);
+        --border-soft: oklch(0.249 0.016 169);
+        --primary: oklch(0.823 0.167 164);
+        --primary-hover: oklch(0.863 0.146 167);
+        --primary-foreground: oklch(0.178 0.029 166);
+        --primary-dim: oklch(0.320 0.043 169);
+        --gold: oklch(0.813 0.165 87);
+        --destructive: oklch(0.735 0.163 22);
+        --ring: oklch(0.823 0.167 164);
+        --stage: #05070a;
+        --radius-sm: 6px;
+        --radius: 12px;
+        --radius-full: 999px;
+        --bg: var(--background);
+        --bg-deep: var(--background-deep);
+        --surface: var(--card);
+        --surface-2: var(--card-2);
+        --ink: var(--foreground);
+        --ink-soft: var(--muted-foreground);
+        --line: var(--border);
+        --line-soft: var(--border-soft);
+        --accent: var(--primary);
+        --accent-dim: var(--primary-dim);
         --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
         --display: "Sora", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+      /* Light theme: same hue family, system preference only (no toggle).
+         Dark stays the default for users without a preference. */
+      @media (prefers-color-scheme: light) {
+        :root {
+          --background: oklch(0.985 0.006 170);
+          --background-deep: oklch(0.965 0.008 170);
+          --card: oklch(1 0 0);
+          --card-2: oklch(0.96 0.008 170);
+          --foreground: oklch(0.22 0.02 170);
+          --muted-foreground: oklch(0.46 0.028 170);
+          --border: oklch(0.87 0.016 170);
+          --border-soft: oklch(0.92 0.012 170);
+          --primary: oklch(0.62 0.15 165);
+          --primary-hover: oklch(0.57 0.15 165);
+          --primary-foreground: oklch(0.985 0.006 170);
+          --primary-dim: oklch(0.93 0.055 165);
+          --gold: oklch(0.68 0.15 87);
+          --destructive: oklch(0.55 0.15 22);
+          --ring: oklch(0.62 0.15 165);
+        }
       }
       * { box-sizing: border-box; }
       html { scroll-behavior: smooth; }
@@ -50,6 +94,7 @@
         margin: 0 -22px;
         padding: 0 22px;
         background: rgba(5, 7, 10, 0.92);
+        background: color-mix(in oklch, var(--background) 92%, transparent);
         border-bottom: 1px solid var(--line);
         backdrop-filter: blur(8px);
         -webkit-backdrop-filter: blur(8px);
@@ -231,16 +276,17 @@
         font-size: 14px;
         font-weight: 700;
         font-family: var(--display);
-        color: #04150e;
+        color: var(--primary-foreground);
         background: var(--accent);
         border: 1px solid var(--accent);
-        border-radius: 999px;
+        border-radius: var(--radius-full);
+        min-height: 40px;
         padding: 7px 14px;
         cursor: pointer;
         white-space: nowrap;
       }
       .wallet-btn svg { flex: none; }
-      .wallet-btn:hover { background: #5df0bd; border-color: #5df0bd; }
+      .wallet-btn:hover { background: var(--primary-hover); border-color: var(--primary-hover); }
       .wallet-btn:active { transform: scale(0.97); }
       .wallet-btn[disabled] { opacity: 0.65; cursor: wait; }
       .wallet-btn.connected {
@@ -270,6 +316,19 @@
         background: var(--bg-deep);
         border-bottom: 1px solid var(--line-soft);
       }
+      /* The one orchestrated motion moment: hero resolves from a blur
+         + slight rise, staggered, 600ms total. Off-ramp in the
+         prefers-reduced-motion block below. */
+      @keyframes hero-in {
+        from { opacity: 0; filter: blur(6px); transform: translateY(8px); }
+        to { opacity: 1; filter: blur(0); transform: none; }
+      }
+      .hero-label, .welcome, .welcome-note, .hero-cta {
+        animation: hero-in 0.45s ease both;
+      }
+      .welcome { animation-delay: 0.05s; }
+      .welcome-note { animation-delay: 0.1s; }
+      .hero-cta { animation-delay: 0.15s; }
       .hero-label {
         display: flex;
         align-items: center;
@@ -293,7 +352,7 @@
         font-family: var(--display);
         font-size: clamp(20px, 3.4vw, 26px);
         font-weight: 700;
-        letter-spacing: -0.01em;
+        letter-spacing: -0.02em;
         color: var(--ink);
         margin: 0 0 12px;
         line-height: 1.38;
@@ -317,28 +376,31 @@
       .cta-btn {
         display: inline-flex;
         align-items: center;
+        justify-content: center;
         font-family: var(--display);
         font-size: 14px;
         font-weight: 700;
         color: var(--ink);
         background: transparent;
         border: 1px solid var(--line);
-        border-radius: 999px;
+        border-radius: var(--radius-full);
+        min-height: 40px;
         padding: 9px 18px;
         text-decoration: none;
         white-space: nowrap;
       }
       .cta-btn:hover { color: var(--accent); border-color: rgba(47, 230, 167, 0.45); }
-      .cta-btn.primary { color: #04150e; background: var(--accent); border-color: var(--accent); }
-      .cta-btn.primary:hover { color: #04150e; filter: brightness(1.07); }
+      .cta-btn.primary { color: var(--primary-foreground); background: var(--accent); border-color: var(--accent); }
+      .cta-btn.primary:hover { color: var(--primary-foreground); filter: brightness(1.07); }
       .cta-btn:active { transform: scale(0.97); }
       /* ---------- Sections ---------- */
       section { margin-top: 46px; }
       h2 {
         font-family: var(--display);
-        font-size: 21px;
+        font-size: clamp(20px, 2.6vw, 24px);
         font-weight: 700;
-        letter-spacing: -0.01em;
+        letter-spacing: -0.02em;
+        line-height: 1.25;
         color: var(--ink);
         margin: 0 0 14px;
       }
@@ -359,7 +421,7 @@
         gap: 9px;
         background: var(--surface);
         border: 1px solid var(--line);
-        border-radius: 999px;
+        border-radius: var(--radius-full);
         padding: 9px 17px;
         font-family: var(--display);
         font-size: 14.5px;
@@ -416,8 +478,13 @@
       .porto-card {
         background: var(--surface);
         border: 1px solid var(--line);
-        border-radius: 12px;
+        border-radius: var(--radius);
         padding: 20px;
+        transition: border-color 0.2s ease, transform 0.2s ease;
+      }
+      .porto-card:hover {
+        border-color: rgba(47, 230, 167, 0.35);
+        transform: translateY(-2px);
       }
       .porto-card.wide { grid-column: 1 / -1; }
       .porto-card h3 { margin: 0 0 6px; font-size: 17px; font-family: var(--display); font-weight: 700; }
@@ -429,7 +496,7 @@
         font-weight: 700;
         color: var(--accent);
         background: var(--accent-dim);
-        border-radius: 6px;
+        border-radius: var(--radius-sm);
         padding: 3px 9px;
         margin-bottom: 12px;
       }
@@ -439,7 +506,7 @@
       .table-wrap {
         overflow-x: auto;
         border: 1px solid var(--line);
-        border-radius: 12px;
+        border-radius: var(--radius);
         background: var(--surface);
       }
       .bounty-table {
@@ -476,7 +543,7 @@
         font-weight: 700;
         color: var(--gold);
         background: rgba(240, 185, 11, 0.13);
-        border-radius: 6px;
+        border-radius: var(--radius-sm);
         padding: 3px 9px;
         white-space: nowrap;
       }
@@ -485,7 +552,7 @@
       .edu-card {
         background: var(--surface);
         border: 1px solid var(--line);
-        border-radius: 12px;
+        border-radius: var(--radius);
         padding: 20px 22px;
         display: flex;
         flex-wrap: wrap;
@@ -524,14 +591,14 @@
         color: var(--ink);
         background: var(--bg-deep);
         border: 1px solid var(--line);
-        border-radius: 999px;
+        border-radius: var(--radius-full);
         padding: 10px 16px;
         outline: none;
       }
       .addr-input::placeholder { color: var(--ink-soft); }
       .addr-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(47, 230, 167, 0.18); }
       .cw-err {
-        color: #ff7a7a;
+        color: var(--destructive);
         font-size: 14px;
         margin: 10px 0 0;
       }
@@ -559,8 +626,9 @@
         font: inherit;
         font-size: 12.5px;
         font-weight: 600;
-        border-radius: 6px;
-        padding: 4px 11px;
+        border-radius: var(--radius-sm);
+        min-height: 32px;
+        padding: 6px 12px;
         cursor: pointer;
       }
       .mini-btn:hover { color: var(--accent); border-color: rgba(47, 230, 167, 0.45); }
@@ -573,7 +641,7 @@
       .bal-card {
         background: var(--surface);
         border: 1px solid var(--line);
-        border-radius: 12px;
+        border-radius: var(--radius);
         padding: 16px 18px;
       }
       .bal-top {
@@ -591,7 +659,7 @@
         text-transform: uppercase;
         color: var(--accent);
         background: var(--accent-dim);
-        border-radius: 6px;
+        border-radius: var(--radius-sm);
         padding: 3px 9px;
       }
       .bal-amt {
@@ -608,7 +676,7 @@
       .game-card {
         background: var(--surface);
         border: 1px solid var(--line);
-        border-radius: 12px;
+        border-radius: var(--radius);
         padding: 18px;
       }
       .game-hud {
@@ -636,7 +704,7 @@
         display: block;
         width: 100%;
         height: auto;
-        background: var(--bg-deep);
+        background: var(--stage);
         border: 1px solid var(--line);
         border-radius: 10px;
         touch-action: none;
@@ -826,7 +894,7 @@
         justify-content: space-between;
       }
       a { color: var(--accent); }
-      :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+      :focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; border-radius: 4px; }
 
       /* ---------- Navbar di layar kecil (HP): menu hamburger ----------
          Navbar cukup satu baris: brand di kiri, ikon garis 3 di kanan.
@@ -891,6 +959,9 @@
         .cw-actions { margin-left: 0; }
       }
       @media (prefers-reduced-motion: reduce) {
+        .hero-label, .welcome, .welcome-note, .hero-cta { animation: none; }
+        .porto-card { transition: none; }
+        .porto-card:hover { transform: none; }
         .brand-mark { animation: none; }
         .brand-mark::after { animation: none; opacity: 0; }
         html { scroll-behavior: auto; }
