@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="color-scheme" content="dark light" />
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232fe6a7'/%3E%3Ctext x='32' y='42' text-anchor='middle' font-family='Arial, sans-serif' font-size='26' font-weight='800' fill='%2304150e'%3ESP%3C/text%3E%3Ccircle cx='52' cy='12' r='5' fill='%23f0b90b'/%3E%3C/svg%3E" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2360a5fa'/%3E%3Ctext x='32' y='42' text-anchor='middle' font-family='Arial, sans-serif' font-size='26' font-weight='800' fill='%230a1128'%3ESP%3C/text%3E%3Ccircle cx='52' cy='12' r='5' fill='%23f0b90b'/%3E%3C/svg%3E" />
     <title>Sanjaya Purba Landing Page Pribadi</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -20,17 +20,17 @@
         --background-deep: oklch(0.127 0.009 254);
         --card: oklch(0.197 0.015 249);
         --card-2: oklch(0.227 0.021 252);
-        --foreground: oklch(0.964 0.009 161);
-        --muted-foreground: oklch(0.740 0.025 163);
-        --border: oklch(0.294 0.022 167);
-        --border-soft: oklch(0.249 0.016 169);
-        --primary: oklch(0.823 0.167 164);
-        --primary-hover: oklch(0.863 0.146 167);
-        --primary-foreground: oklch(0.178 0.029 166);
-        --primary-dim: oklch(0.320 0.043 169);
+        --foreground: oklch(0.964 0.009 250);
+        --muted-foreground: oklch(0.740 0.025 250);
+        --border: oklch(0.294 0.022 250);
+        --border-soft: oklch(0.249 0.016 250);
+        --primary: oklch(0.74 0.15 255);
+        --primary-hover: oklch(0.79 0.13 255);
+        --primary-foreground: oklch(0.20 0.03 255);
+        --primary-dim: oklch(0.30 0.05 255);
         --gold: oklch(0.813 0.165 87);
         --destructive: oklch(0.735 0.163 22);
-        --ring: oklch(0.823 0.167 164);
+        --ring: oklch(0.74 0.15 255);
         --stage: #05070a;
         --radius-sm: 6px;
         --radius: 12px;
@@ -52,21 +52,21 @@
          Dark stays the default for users without a preference. */
       @media (prefers-color-scheme: light) {
         :root {
-          --background: oklch(0.985 0.006 170);
-          --background-deep: oklch(0.965 0.008 170);
+          --background: oklch(0.985 0.006 250);
+          --background-deep: oklch(0.965 0.008 250);
           --card: oklch(1 0 0);
-          --card-2: oklch(0.96 0.008 170);
-          --foreground: oklch(0.22 0.02 170);
-          --muted-foreground: oklch(0.46 0.028 170);
-          --border: oklch(0.87 0.016 170);
-          --border-soft: oklch(0.92 0.012 170);
-          --primary: oklch(0.62 0.15 165);
-          --primary-hover: oklch(0.57 0.15 165);
-          --primary-foreground: oklch(0.985 0.006 170);
-          --primary-dim: oklch(0.93 0.055 165);
+          --card-2: oklch(0.96 0.008 250);
+          --foreground: oklch(0.22 0.02 250);
+          --muted-foreground: oklch(0.46 0.028 250);
+          --border: oklch(0.87 0.016 250);
+          --border-soft: oklch(0.92 0.012 250);
+          --primary: oklch(0.55 0.16 255);
+          --primary-hover: oklch(0.50 0.16 255);
+          --primary-foreground: oklch(0.985 0.006 250);
+          --primary-dim: oklch(0.93 0.05 255);
           --gold: oklch(0.68 0.15 87);
           --destructive: oklch(0.55 0.15 22);
-          --ring: oklch(0.62 0.15 165);
+          --ring: oklch(0.55 0.16 255);
         }
       }
       * { box-sizing: border-box; }
@@ -129,26 +129,26 @@
         height: 40px;
         flex: none;
         border-radius: 12px;
-        background: linear-gradient(145deg, #5df0bd 0%, #2fe6a7 42%, #17c98d 100%);
+        background: linear-gradient(145deg, #93c5fd 0%, #60a5fa 42%, #2563eb 100%);
         box-shadow:
-          0 0 0 1px rgba(47, 230, 167, 0.55),
+          0 0 0 1px rgba(96, 165, 250, 0.55),
           0 1px 2px rgba(0, 0, 0, 0.45),
-          0 0 14px rgba(47, 230, 167, 0.35);
+          0 0 14px rgba(96, 165, 250, 0.35);
         overflow: visible;
         animation: sp-glow-pulse-sm 3.2s ease-in-out infinite;
       }
       @keyframes sp-glow-pulse-sm {
         0%, 100% {
           box-shadow:
-            0 0 0 1px rgba(47, 230, 167, 0.55),
+            0 0 0 1px rgba(96, 165, 250, 0.55),
             0 1px 2px rgba(0, 0, 0, 0.45),
-            0 0 14px rgba(47, 230, 167, 0.35);
+            0 0 14px rgba(96, 165, 250, 0.35);
         }
         50% {
           box-shadow:
-            0 0 0 1px rgba(47, 230, 167, 0.8),
+            0 0 0 1px rgba(96, 165, 250, 0.8),
             0 1px 2px rgba(0, 0, 0, 0.45),
-            0 0 26px rgba(47, 230, 167, 0.55);
+            0 0 26px rgba(96, 165, 250, 0.55);
         }
       }
       @keyframes sp-shine {
@@ -183,7 +183,7 @@
         font-size: 19px;
         font-weight: 800;
         letter-spacing: -0.06em;
-        color: #04150e;
+        color: #0a1128;
         text-shadow: 0 1px 0 rgba(255, 255, 255, 0.22);
       }
       .brand-mark-letters i {
@@ -291,7 +291,7 @@
       .wallet-btn[disabled] { opacity: 0.65; cursor: wait; }
       .wallet-btn.connected {
         background: transparent;
-        border-color: rgba(47, 230, 167, 0.55);
+        border-color: rgba(96, 165, 250, 0.55);
         color: var(--accent);
         font-family: var(--mono);
         font-size: 13.5px;
@@ -389,7 +389,7 @@
         text-decoration: none;
         white-space: nowrap;
       }
-      .cta-btn:hover { color: var(--accent); border-color: rgba(47, 230, 167, 0.45); }
+      .cta-btn:hover { color: var(--accent); border-color: rgba(96, 165, 250, 0.45); }
       .cta-btn.primary { color: var(--primary-foreground); background: var(--accent); border-color: var(--accent); }
       .cta-btn.primary:hover { color: var(--primary-foreground); filter: brightness(1.07); }
       .cta-btn:active { transform: scale(0.97); }
@@ -442,7 +442,7 @@
         flex: none;
       }
       .chips li:hover {
-        border-color: rgba(47, 230, 167, 0.45);
+        border-color: rgba(96, 165, 250, 0.45);
         background: var(--surface-2);
       }
 
@@ -483,7 +483,7 @@
         transition: border-color 0.2s ease, transform 0.2s ease;
       }
       .porto-card:hover {
-        border-color: rgba(47, 230, 167, 0.35);
+        border-color: rgba(96, 165, 250, 0.35);
         transform: translateY(-2px);
       }
       .porto-card.wide { grid-column: 1 / -1; }
@@ -596,7 +596,7 @@
         outline: none;
       }
       .addr-input::placeholder { color: var(--ink-soft); }
-      .addr-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(47, 230, 167, 0.18); }
+      .addr-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.18); }
       .cw-err {
         color: var(--destructive);
         font-size: 14px;
@@ -631,7 +631,7 @@
         padding: 6px 12px;
         cursor: pointer;
       }
-      .mini-btn:hover { color: var(--accent); border-color: rgba(47, 230, 167, 0.45); }
+      .mini-btn:hover { color: var(--accent); border-color: rgba(96, 165, 250, 0.45); }
       .mini-btn:active { transform: scale(0.97); }
       .bal-grid {
         display: grid;
@@ -730,7 +730,7 @@
         margin: 0;
         /* Warna eksplisit: latar overlay selalu gelap, jadi teksnya
            harus selalu terang, apa pun tema terang/gelap browser. */
-        color: #eafff5;
+        color: #eaf3ff;
       }
       .game-pad {
         display: none;
@@ -821,7 +821,7 @@
         align-items: center;
         justify-content: center;
       }
-      .wallet-modal-close:hover { color: var(--accent); border-color: rgba(47, 230, 167, 0.45); }
+      .wallet-modal-close:hover { color: var(--accent); border-color: rgba(96, 165, 250, 0.45); }
       .wallet-modal-close:active { transform: scale(0.95); }
       .wallet-grid {
         display: grid;
@@ -842,7 +842,7 @@
         font: inherit;
         color: var(--ink);
       }
-      .wallet-tile:hover { border-color: rgba(47, 230, 167, 0.5); }
+      .wallet-tile:hover { border-color: rgba(96, 165, 250, 0.5); }
       .wallet-tile:active { transform: scale(0.97); }
       .wallet-tile[disabled] { opacity: 0.55; cursor: wait; }
       .wallet-tile .wallet-ico { width: 46px; height: 46px; flex: none; }
@@ -1880,7 +1880,7 @@
       function sDraw() {
         sctx.fillStyle = '#05070a';
         sctx.fillRect(0, 0, snakeCanvas.width, snakeCanvas.height);
-        sctx.strokeStyle = 'rgba(47, 230, 167, 0.05)';
+        sctx.strokeStyle = 'rgba(96, 165, 250, 0.05)';
         sctx.lineWidth = 1;
         sctx.beginPath();
         for (var gx = 1; gx < S_COLS; gx++) {
@@ -1899,14 +1899,14 @@
         sctx.fill();
         // Ular: ekor dulu, kepala terakhir.
         for (var i = sSnake.length - 1; i >= 0; i--) {
-          if (i === 0) sCell(sSnake[i].x, sSnake[i].y, 1.5, '#2fe6a7');
-          else sCell(sSnake[i].x, sSnake[i].y, 2.5, 'rgba(47, 230, 167, 0.68)');
+          if (i === 0) sCell(sSnake[i].x, sSnake[i].y, 1.5, '#60a5fa');
+          else sCell(sSnake[i].x, sSnake[i].y, 2.5, 'rgba(96, 165, 250, 0.68)');
         }
         // Mata kepala, mengikuti arah jalan.
         var hx = sSnake[0].x * S_CELL + S_CELL / 2;
         var hy = sSnake[0].y * S_CELL + S_CELL / 2;
         var perpX = -sDir.y, perpY = sDir.x;
-        sctx.fillStyle = '#04150e';
+        sctx.fillStyle = '#0a1128';
         [-4.5, 4.5].forEach(function (off) {
           sctx.beginPath();
           sctx.arc(hx + sDir.x * 3 + perpX * off, hy + sDir.y * 3 + perpY * off, 2.1, 0, Math.PI * 2);
