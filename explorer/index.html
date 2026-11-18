@@ -99,6 +99,9 @@
   .error-text { color: var(--destructive); }
   .blocks-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
   .blocks-head .mini-btn { padding: 7px 14px; font-size: 13px; }
+  .live-ind { display: inline-flex; align-items: center; gap: 6px; margin-left: auto; font-size: 12.5px; font-weight: 700; color: var(--gold); }
+  .live-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); animation: live-pulse 1.6s ease-in-out infinite; }
+  @keyframes live-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
   table { width: 100%; border-collapse: collapse; font-size: 14px; }
   th { text-align: left; color: var(--ink-soft); font-weight: 600; padding: 8px 10px; border-bottom: 1px solid var(--line); }
   td { padding: 9px 10px; border-bottom: 1px solid var(--border-soft); vertical-align: top; }
@@ -147,6 +150,7 @@
   <section>
     <div class="blocks-head">
       <h2 id="blocksTitle">Blok terbaru</h2>
+      <span class="live-ind" title="Diperbarui otomatis tiap 12 detik"><span class="live-dot"></span>Live</span>
       <button class="mini-btn" id="refreshBlocks" type="button">Muat ulang</button>
     </div>
     <div class="panel" style="padding:6px 6px 2px;">
@@ -282,17 +286,22 @@
   }
 
   /* ---------- Blok terbaru ---------- */
-  function loadBlocks() {
+  var blocksLoading = false;
+  function loadBlocks(quiet) {
+    if (blocksLoading) return;
+    blocksLoading = true;
     var chain = CHAINS[blocksChain];
     $('blocksTitle').textContent = 'Blok terbaru — ' + chain.name;
     var body = $('blocksBody');
-    body.innerHTML = '';
-    var loading = el('tr');
-    var td = el('td', 'muted', 'Memuat…');
-    td.colSpan = 4;
-    loading.appendChild(td);
-    body.appendChild(loading);
-    $('blocksNote').textContent = '';
+    if (!quiet) {
+      body.innerHTML = '';
+      var loading = el('tr');
+      var td = el('td', 'muted', 'Memuat…');
+      td.colSpan = 4;
+      loading.appendChild(td);
+      body.appendChild(loading);
+      $('blocksNote').textContent = '';
+    }
     rpc(chain, 'eth_blockNumber', []).then(function (numHex) {
       var latest = Number(hexToBig(numHex));
       var jobs = [];
@@ -301,6 +310,7 @@
       }
       return Promise.all(jobs);
     }).then(function (blocks) {
+      blocksLoading = false;
       body.innerHTML = '';
       blocks.forEach(function (b) {
         if (!b) return;
@@ -318,6 +328,8 @@
       });
       $('blocksNote').textContent = 'Klik nomor blok atau hash untuk melihat detailnya.';
     }).catch(function () {
+      blocksLoading = false;
+      if (quiet) return;
       body.innerHTML = '';
       var tr = el('tr');
       var td = el('td', 'error-text', chain.name + ' tidak menjawab. Coba muat ulang.');
@@ -523,10 +535,11 @@
     }
   });
 
-  $('refreshBlocks').addEventListener('click', loadBlocks);
+  $('refreshBlocks').addEventListener('click', function () { loadBlocks(false); });
   $('year').textContent = new Date().getFullYear();
   buildTabs();
   loadBlocks();
+  setInterval(function () { if (!document.hidden) loadBlocks(true); }, 12000);
 </script>
 </body>
 </html>
