@@ -958,8 +958,14 @@
         .bal-grid { grid-template-columns: 1fr; }
         .cw-actions { margin-left: 0; }
       }
+      /* Scroll reveal: teks muncul saat di-scroll ke bawah. Keadaan
+         tersembunyi hanya berlaku kalau JS aktif (body.js-reveal),
+         jadi tanpa JS semua konten tetap terlihat. */
+      body.js-reveal .reveal { opacity: 0; transform: translateY(24px); transition: opacity .6s ease, transform .6s ease; }
+      body.js-reveal .reveal.visible { opacity: 1; transform: none; }
       @media (prefers-reduced-motion: reduce) {
         .hero-label, .welcome, .welcome-note, .hero-cta { animation: none; }
+        body.js-reveal .reveal { opacity: 1; transform: none; transition: none; }
         .porto-card { transition: none; }
         .porto-card:hover { transform: none; }
         .brand-mark { animation: none; }
@@ -1017,7 +1023,7 @@
       </header>
 
       <!-- Tentang -->
-      <section aria-labelledby="tentang">
+      <section class="reveal" aria-labelledby="tentang">
         <h2 id="tentang">Tentang Saya</h2>
         <p>
           Lulusan S1 Sistem Informasi. Empat tahun bekerja sebagai Customer
@@ -1037,7 +1043,7 @@
       </section>
 
       <!-- Keahlian -->
-      <section aria-labelledby="keahlian">
+      <section class="reveal" aria-labelledby="keahlian">
         <h2 id="keahlian">Yang Biasa Saya Kerjakan</h2>
         <ul class="chips">
           <li>Deployment Smart Contract</li>
@@ -1057,7 +1063,7 @@
       </section>
 
       <!-- Pengalaman -->
-      <section aria-labelledby="pengalaman">
+      <section class="reveal" aria-labelledby="pengalaman">
         <h2 id="pengalaman">Pengalaman</h2>
         <ul class="exp">
           <li>
@@ -1095,7 +1101,7 @@
       </section>
 
       <!-- Portfolio -->
-      <section aria-labelledby="portfolio">
+      <section class="reveal" aria-labelledby="portfolio">
         <h2 id="portfolio">Portfolio</h2>
         <div class="porto-grid">
           <div class="porto-card wide">
@@ -1144,7 +1150,7 @@
       </section>
 
       <!-- Bug Bounty -->
-      <section aria-labelledby="bug-bounty">
+      <section class="reveal" aria-labelledby="bug-bounty">
         <h2 id="bug-bounty">Bug Bounty &amp; Riset Keamanan</h2>
         <p>
           Pada November 2026 saya mulai mengikuti program bug bounty:
@@ -1220,7 +1226,7 @@
       </section>
 
       <!-- Check Wallet -->
-      <section aria-labelledby="check-wallet">
+      <section class="reveal" aria-labelledby="check-wallet">
         <h2 id="check-wallet">Check Wallet</h2>
         <div id="cwDisconnected">
           <p>
@@ -1252,7 +1258,7 @@
       </section>
 
       <!-- Game Ular -->
-      <section aria-labelledby="game">
+      <section class="reveal" aria-labelledby="game">
         <h2 id="game">Game Ular</h2>
         <p>
           Game kecil buat selingan, kendalikan ularnya dan makan bola
@@ -1295,7 +1301,7 @@
       </section>
 
       <!-- Pendidikan -->
-      <section aria-labelledby="pendidikan">
+      <section class="reveal" aria-labelledby="pendidikan">
         <h2 id="pendidikan">Pendidikan</h2>
         <div class="edu-card">
           <h3>S1 Sistem Informasi</h3>
@@ -1304,7 +1310,7 @@
       </section>
 
       <!-- Kontak -->
-      <section aria-labelledby="kontak">
+      <section class="reveal" aria-labelledby="kontak">
         <h2 id="kontak">Kontak</h2>
         <p>
           Di ekosistem Web3, saya bisa dikenali lewat Binance Agent ID
@@ -1324,7 +1330,7 @@
         </p>
       </section>
 
-      <footer>
+      <footer class="reveal">
         <span>© <span id="year">2026</span> Sanjaya Purba</span>
         <span>Belinyu, Bangka</span>
       </footer>
@@ -2050,6 +2056,26 @@
       });
 
       sReset();
+
+      // Scroll reveal: tampilkan section saat masuk viewport.
+      (function () {
+        var revealEls = document.querySelectorAll('.reveal');
+        if (!revealEls.length) return;
+        document.body.classList.add('js-reveal');
+        if (!('IntersectionObserver' in window)) {
+          revealEls.forEach(function (el) { el.classList.add('visible'); });
+          return;
+        }
+        var observer = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.12 });
+        revealEls.forEach(function (el) { observer.observe(el); });
+      })();
     </script>
   </body>
 </html>
