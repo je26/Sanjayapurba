@@ -996,6 +996,7 @@
         color: var(--ink); letter-spacing: -0.02em;
       }
       .home-stats dd { margin: 2px 0 0; color: var(--ink-soft); font-size: 13.5px; }
+      .home-stats dt .num { color: #e5484d; }
       .home-cards {
         display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;
         margin-top: 12px;
@@ -1007,7 +1008,7 @@
       .home-card:hover { border-color: var(--accent); }
       .home-card h2 { font-size: 16px; margin: 0 0 6px; }
       .home-card p { margin: 0; color: var(--ink-soft); font-size: 14px; }
-      .home-card span { display: block; margin-top: 10px; color: var(--ink); font-size: 14px; font-weight: 600; }
+      .home-card span { display: block; margin-top: 10px; color: #e5484d; font-size: 14px; font-weight: 600; }
       @media (max-width: 680px) {
         .home-stats, .home-cards { grid-template-columns: 1fr; }
       }
@@ -1070,15 +1071,15 @@
         </p>
         <dl class="home-stats">
           <div>
-            <dt>4 tahun</dt>
+            <dt><span class="num">4</span> tahun</dt>
             <dd>Customer Service Bank BRI</dd>
           </div>
           <div>
-            <dt>13 program</dt>
+            <dt><span class="num">13</span> program</dt>
             <dd>Bug bounty diikuti</dd>
           </div>
           <div>
-            <dt>7 jaringan</dt>
+            <dt><span class="num">7</span> jaringan</dt>
             <dd>Saldo dibaca Check Wallet</dd>
           </div>
         </dl>
