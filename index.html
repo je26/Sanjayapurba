@@ -74,8 +74,13 @@
       .wrap {
         max-width: 900px;
         margin: 0 auto;
-        padding: 0 22px 72px;
+        padding: 0 22px 32px;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        min-height: 100dvh;
       }
+      [data-view-panel] { flex: 1 0 auto; }
 
       /* ---------- Navbar ---------- */
       .navbar {
