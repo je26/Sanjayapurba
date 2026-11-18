@@ -1012,6 +1012,26 @@
       .home-card p { margin: 0; color: var(--ink-soft); font-size: 14px; }
       .home-card span { display: block; margin-top: 10px; color: #e5484d; font-size: 14px; font-weight: 600; }
       .home-card.wide { grid-column: 1 / -1; }
+      .home-live { margin-top: 28px; }
+      .home-live-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+      .home-live-head h2 { font-size: 18px; margin: 0; }
+      .home-live .live-chain { color: var(--ink-soft); font-size: 13px; font-weight: 600; }
+      .live-ind { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 700; color: var(--gold); }
+      .live-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); animation: live-pulse 1.6s ease-in-out infinite; }
+      @keyframes live-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+      .live-blocks { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 10px; }
+      .live-blocks th { text-align: left; color: var(--ink-soft); font-weight: 600; padding: 8px 10px 8px 0; border-bottom: 1px solid var(--line); }
+      .live-blocks td { padding: 9px 10px 9px 0; border-bottom: 1px solid var(--line-soft); vertical-align: top; }
+      .live-blocks tr:last-child td { border-bottom: none; }
+      .live-blocks .mono { font-family: var(--mono); font-size: 13px; }
+      .live-blocks .num { font-family: var(--mono); font-size: 13px; text-align: right; }
+      .live-blocks .loading-cell { color: var(--ink-soft); }
+      .home-live-more { margin: 10px 0 0; }
+      .home-live-more a { color: #e5484d; font-weight: 600; text-decoration: none; }
+      .home-live-more a:hover { text-decoration: underline; }
+      @media (max-width: 560px) {
+        .live-blocks th:nth-child(4), .live-blocks td:nth-child(4) { display: none; }
+      }
       @media (max-width: 680px) {
         .home-stats, .home-cards { grid-template-columns: 1fr; }
       }
@@ -1107,11 +1127,17 @@
             <p>Ularnya menembus dinding. Kalah hanya kalau menabrak badan sendiri.</p>
             <span>Main &rarr;</span>
           </a>
-          <a class="home-card wide" href="/explorer/">
-            <h2>Sanjaya Explorer</h2>
-            <p>Cari alamat, transaksi, dan blok di 7 jaringan EVM, langsung dari RPC publik.</p>
-            <span>Buka explorer &rarr;</span>
-          </a>
+        </div>
+        <div class="home-live">
+          <div class="home-live-head">
+            <h2>Blok terbaru <span class="live-chain">BSC</span></h2>
+            <span class="live-ind" title="Diperbarui otomatis tiap 12 detik"><span class="live-dot"></span>Live</span>
+          </div>
+          <table class="live-blocks">
+            <thead><tr><th>Blok</th><th>Hash</th><th>Umur</th><th>Tx</th></tr></thead>
+            <tbody id="homeBlocksBody"><tr><td colspan="4" class="loading-cell">Memuat&hellip;</td></tr></tbody>
+          </table>
+          <p class="home-live-more"><a href="/explorer/">Lihat di Sanjaya Explorer &rarr;</a></p>
         </div>
       </header>
 
@@ -2221,6 +2247,65 @@
         }
         window.addEventListener('hashchange', function () { showView(currentView(), true); });
         showView(currentView(), false);
+      })();
+    </script>
+    <script>
+      (function () {
+        var RPC = 'https://bsc-dataseed.binance.org';
+        var rpcId = 0;
+        var loading = false;
+        var body = document.getElementById('homeBlocksBody');
+        if (!body) return;
+        function rpc(method, params) {
+          return fetch(RPC, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ jsonrpc: '2.0', id: ++rpcId, method: method, params: params }) })
+            .then(function (r) { return r.json(); })
+            .then(function (j) { if (!j || j.error) throw new Error('rpc'); return j.result; });
+        }
+        function timeAgo(tsHex) {
+          var s = Math.floor(Date.now() / 1000) - Number(BigInt(tsHex));
+          if (s < 5) return 'baru saja';
+          if (s < 60) return s + ' detik lalu';
+          var m = Math.floor(s / 60);
+          if (m < 60) return m + ' menit lalu';
+          return Math.floor(m / 60) + ' jam lalu';
+        }
+        function shortHash(h) { return h ? h.slice(0, 10) + '…' + h.slice(-6) : '—'; }
+        function esc(t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
+        function load(quiet) {
+          if (loading) return;
+          loading = true;
+          rpc('eth_blockNumber', []).then(function (numHex) {
+            var latest = Number(BigInt(numHex));
+            var jobs = [];
+            for (var n = latest; n > latest - 5 && n >= 0; n--) {
+              jobs.push(rpc('eth_getBlockByNumber', ['0x' + n.toString(16), false]));
+            }
+            return Promise.all(jobs);
+          }).then(function (blocks) {
+            loading = false;
+            var html = '';
+            blocks.forEach(function (b) {
+              if (!b) return;
+              html += '<tr><td class="mono">' + Number(BigInt(b.number)).toLocaleString('id-ID') + '</td>'
+                + '<td class="mono">' + esc(shortHash(b.hash)) + '</td>'
+                + '<td>' + esc(timeAgo(b.timestamp)) + '</td>'
+                + '<td class="num">' + (b.transactions || []).length.toLocaleString('id-ID') + '</td></tr>';
+            });
+            if (html) body.innerHTML = html;
+          }).catch(function () {
+            loading = false;
+            if (!quiet) body.innerHTML = '<tr><td colspan="4" class="loading-cell">Blok tidak bisa dimuat.</td></tr>';
+          });
+        }
+        function homeVisible() { return document.body.getAttribute('data-view') === 'home'; }
+        load(false);
+        setInterval(function () {
+          if (!document.hidden && homeVisible()) load(true);
+        }, 12000);
+        window.addEventListener('hashchange', function () {
+          if (homeVisible()) load(true);
+        });
       })();
     </script>
   </body>
