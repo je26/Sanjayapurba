@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sanjaya Explorer — Explorer EVM multi-jaringan</title>
+<meta name="description" content="Cari alamat, transaksi, dan blok di 7 jaringan EVM: BSC, Ethereum, Polygon, Arbitrum, Base, Optimism, dan Robinhood Chain. Data langsung dari RPC publik." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2360a5fa'/%3E%3Ctext x='32' y='42' text-anchor='middle' font-family='Arial, sans-serif' font-size='26' font-weight='800' fill='%230a1128'%3ESE%3C/text%3E%3C/svg%3E" />
+<style>
+  :root {
+    --background: oklch(0.148 0.008 247);
+    --background-deep: oklch(0.127 0.009 254);
+    --card: oklch(0.197 0.015 249);
+    --card-2: oklch(0.227 0.021 252);
+    --foreground: oklch(0.964 0.009 250);
+    --muted-foreground: oklch(0.740 0.025 250);
+    --border: oklch(0.294 0.022 250);
+    --border-soft: oklch(0.249 0.016 250);
+    --primary: oklch(0.74 0.15 255);
+    --primary-hover: oklch(0.79 0.13 255);
+    --primary-foreground: oklch(0.20 0.03 255);
+    --primary-dim: oklch(0.30 0.05 255);
+    --gold: oklch(0.813 0.165 87);
+    --destructive: oklch(0.735 0.163 22);
+    --ok: oklch(0.80 0.15 145);
+    --bg: var(--background);
+    --surface: var(--card);
+    --surface-2: var(--card-2);
+    --ink: var(--foreground);
+    --ink-soft: var(--muted-foreground);
+    --line: var(--border);
+    --accent: var(--primary);
+    --accent-dim: var(--primary-dim);
+    --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    --display: "Sora", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --background: oklch(0.985 0.006 250);
+      --background-deep: oklch(0.965 0.008 250);
+      --card: oklch(1 0 0);
+      --card-2: oklch(0.96 0.008 250);
+      --foreground: oklch(0.22 0.02 250);
+      --muted-foreground: oklch(0.46 0.028 250);
+      --border: oklch(0.87 0.016 250);
+      --border-soft: oklch(0.92 0.012 250);
+      --primary: oklch(0.55 0.16 255);
+      --primary-hover: oklch(0.50 0.16 255);
+      --primary-foreground: oklch(0.985 0.006 250);
+      --primary-dim: oklch(0.93 0.05 255);
+      --gold: oklch(0.68 0.15 87);
+      --destructive: oklch(0.55 0.15 22);
+      --ok: oklch(0.55 0.15 145);
+    }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 0 20px 56px; }
+  header { padding: 28px 0 8px; }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .brand-mark {
+    width: 44px; height: 44px; border-radius: 12px; flex: none;
+    background: linear-gradient(145deg, #93c5fd 0%, #60a5fa 42%, #2563eb 100%);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--display); font-weight: 800; font-size: 17px; color: #0a1128;
+  }
+  h1 { font-family: var(--display); font-size: 26px; line-height: 1.25; margin: 0; letter-spacing: -0.02em; }
+  .tagline { color: var(--ink-soft); margin: 6px 0 0; font-size: 14px; }
+  .chain-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0 0; }
+  .chain-tab {
+    border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+    border-radius: 999px; padding: 7px 14px; font-size: 14px; cursor: pointer;
+  }
+  .chain-tab.active { background: var(--accent); border-color: var(--accent); color: var(--primary-foreground); font-weight: 700; }
+  .search { display: flex; gap: 8px; margin: 18px 0 0; }
+  .search input {
+    flex: 1; min-width: 0; padding: 12px 14px; font-size: 15px; font-family: var(--mono);
+    color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+  }
+  .search input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.18); }
+  .search button, .mini-btn {
+    padding: 12px 20px; font-size: 15px; font-weight: 700; cursor: pointer;
+    color: var(--primary-foreground); background: var(--accent); border: 1px solid var(--accent); border-radius: 10px;
+  }
+  .search button:hover, .mini-btn:hover { background: var(--primary-hover); }
+  .search-hint { color: var(--ink-soft); font-size: 13px; margin: 8px 2px 0; }
+  section { margin-top: 28px; }
+  h2 { font-family: var(--display); font-size: 19px; margin: 0 0 12px; letter-spacing: -0.01em; }
+  .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+  .panel + .panel { margin-top: 12px; }
+  .kv { display: grid; grid-template-columns: 150px 1fr; gap: 6px 14px; font-size: 14px; }
+  .kv dt { color: var(--ink-soft); }
+  .kv dd { margin: 0; overflow-wrap: anywhere; }
+  .mono { font-family: var(--mono); font-size: 13px; }
+  a.hash-link { color: var(--accent); text-decoration: none; overflow-wrap: anywhere; }
+  a.hash-link:hover { text-decoration: underline; }
+  .status-ok { color: var(--ok); font-weight: 700; }
+  .status-fail { color: var(--destructive); font-weight: 700; }
+  .muted { color: var(--ink-soft); }
+  .error-text { color: var(--destructive); }
+  .blocks-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+  .blocks-head .mini-btn { padding: 7px 14px; font-size: 13px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th { text-align: left; color: var(--ink-soft); font-weight: 600; padding: 8px 10px; border-bottom: 1px solid var(--line); }
+  td { padding: 9px 10px; border-bottom: 1px solid var(--border-soft); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  .num { font-family: var(--mono); font-size: 13px; text-align: right; }
+  .bal-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+  .bal-card { background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px; padding: 12px; }
+  .bal-name { font-weight: 700; font-size: 14px; display: block; }
+  .bal-amt { font-family: var(--mono); font-size: 14px; margin-top: 4px; overflow-wrap: anywhere; }
+  .bal-amt.loading, .loading { color: var(--ink-soft); }
+  .bal-amt.error { color: var(--destructive); }
+  .tx-list { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 6px; }
+  footer { margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--line); color: var(--ink-soft); font-size: 13px; display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  @media (max-width: 560px) {
+    .kv { grid-template-columns: 1fr; gap: 2px; }
+    .kv dd { margin-bottom: 8px; }
+    .search { flex-direction: column; }
+    .search button { width: 100%; }
+    th:nth-child(4), td:nth-child(4) { display: none; }
+  }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header>
+    <div class="brand">
+      <span class="brand-mark">SE</span>
+      <div>
+        <h1>Sanjaya Explorer</h1>
+        <p class="tagline">Alamat, transaksi, dan blok di 7 jaringan EVM, langsung dari RPC publik.</p>
+      </div>
+    </div>
+    <div class="chain-tabs" id="chainTabs" role="tablist" aria-label="Pilih jaringan"></div>
+    <form class="search" id="searchForm">
+      <input id="searchInput" type="text" placeholder="Alamat 0x…, hash transaksi 0x…, atau nomor blok" autocomplete="off" spellcheck="false" aria-label="Cari alamat, hash transaksi, atau nomor blok" />
+      <button type="submit">Cari</button>
+    </form>
+    <p class="search-hint">Di tab "Semua jaringan", pencarian dicoba ke semua jaringan sekaligus. Pilih satu jaringan untuk pencarian yang lebih cepat.</p>
+  </header>
+
+  <section id="resultSection" hidden>
+    <h2 id="resultTitle">Hasil</h2>
+    <div id="resultBox"></div>
+  </section>
+
+  <section>
+    <div class="blocks-head">
+      <h2 id="blocksTitle">Blok terbaru</h2>
+      <button class="mini-btn" id="refreshBlocks" type="button">Muat ulang</button>
+    </div>
+    <div class="panel" style="padding:6px 6px 2px;">
+      <table aria-label="Blok terbaru">
+        <thead><tr><th>Blok</th><th>Hash</th><th>Umur</th><th>Transaksi</th></tr></thead>
+        <tbody id="blocksBody"><tr><td colspan="4" class="muted">Memuat…</td></tr></tbody>
+      </table>
+    </div>
+    <p class="search-hint" id="blocksNote"></p>
+  </section>
+
+  <footer>
+    <span>© <span id="year">2026</span> Sanjaya Purba</span>
+    <span>Data dibaca langsung dari node RPC publik tiap jaringan.</span>
+  </footer>
+</main>
+
+<script>
+  var CHAINS = [
+    { name: 'BSC', symbol: 'BNB', rpc: 'https://bsc-dataseed.binance.org' },
+    { name: 'Ethereum', symbol: 'ETH', rpc: 'https://ethereum-rpc.publicnode.com' },
+    { name: 'Polygon', symbol: 'POL', rpc: 'https://polygon-bor-rpc.publicnode.com' },
+    { name: 'Arbitrum', symbol: 'ETH', rpc: 'https://arb1.arbitrum.io/rpc' },
+    { name: 'Base', symbol: 'ETH', rpc: 'https://mainnet.base.org' },
+    { name: 'Optimism', symbol: 'ETH', rpc: 'https://mainnet.optimism.io' },
+    { name: 'Robinhood Chain', symbol: 'ETH', rpc: 'https://rpc.mainnet.chain.robinhood.com' }
+  ];
+  var selectedChain = -1; // -1 = semua jaringan
+  var blocksChain = 0;    // jaringan untuk daftar blok terbaru (default BSC)
+  var rpcId = 0;
+
+  function $(id) { return document.getElementById(id); }
+
+  function rpc(chain, method, params) {
+    return fetch(chain.rpc, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ jsonrpc: '2.0', id: ++rpcId, method: method, params: params })
+    }).then(function (r) { return r.json(); }).then(function (j) {
+      if (!j || j.error) throw new Error((j && j.error && j.error.message) || 'rpc');
+      return j.result;
+    });
+  }
+
+  function hexToBig(hex) { return BigInt(hex); }
+  function formatNative(hex) {
+    var wei = hexToBig(hex);
+    if (wei === 0n) return '0';
+    var base = 10n ** 18n;
+    var whole = wei / base;
+    var frac = (wei % base).toString().padStart(18, '0').slice(0, 6).replace(/0+$/, '');
+    if (whole === 0n && !frac) return '<0.000001';
+    return frac ? whole.toString() + '.' + frac : whole.toString();
+  }
+  function formatGwei(hex) {
+    var wei = hexToBig(hex);
+    var base = 10n ** 9n;
+    var whole = wei / base;
+    var frac = (wei % base).toString().padStart(9, '0').slice(0, 2).replace(/0+$/, '');
+    return frac ? whole.toString() + '.' + frac : whole.toString();
+  }
+  function shortHash(h) {
+    if (!h || h.length <= 18) return h || '';
+    return h.slice(0, 10) + '…' + h.slice(-8);
+  }
+  function timeAgo(tsHex) {
+    var ts = Number(hexToBig(tsHex)) * 1000;
+    var diff = Math.max(0, Date.now() - ts);
+    var s = Math.floor(diff / 1000);
+    if (s < 5) return 'baru saja';
+    if (s < 60) return s + ' dtk lalu';
+    var m = Math.floor(s / 60);
+    if (m < 60) return m + ' mnt lalu';
+    var h = Math.floor(m / 60);
+    if (h < 24) return h + ' jam lalu';
+    return Math.floor(h / 24) + ' hari lalu';
+  }
+  function formatTime(tsHex) {
+    var d = new Date(Number(hexToBig(tsHex)) * 1000);
+    return d.toLocaleString('id-ID', { timeZone: 'Asia/Jakarta', day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' }) + ' WIB';
+  }
+  function el(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined && text !== null) e.textContent = text;
+    return e;
+  }
+  function kvRow(dt, ddNode) {
+    var row = document.createDocumentFragment();
+    row.appendChild(el('dt', null, dt));
+    var dd = el('dd');
+    if (typeof ddNode === 'string') dd.textContent = ddNode;
+    else dd.appendChild(ddNode);
+    row.appendChild(dd);
+    return row;
+  }
+  function hashLink(text, kind, value, chainIdx) {
+    var a = el('a', 'hash-link mono', text);
+    a.href = '#';
+    a.addEventListener('click', function (e) {
+      e.preventDefault();
+      openResult(kind, value, chainIdx);
+    });
+    return a;
+  }
+
+  /* ---------- Tab jaringan ---------- */
+  function buildTabs() {
+    var tabs = $('chainTabs');
+    var all = el('button', 'chain-tab active', 'Semua jaringan');
+    all.type = 'button';
+    all.setAttribute('role', 'tab');
+    all.addEventListener('click', function () { selectChain(-1); });
+    tabs.appendChild(all);
+    CHAINS.forEach(function (chain, i) {
+      var b = el('button', 'chain-tab', chain.name);
+      b.type = 'button';
+      b.setAttribute('role', 'tab');
+      b.addEventListener('click', function () { selectChain(i); });
+      tabs.appendChild(b);
+    });
+  }
+  function selectChain(i) {
+    selectedChain = i;
+    var tabs = $('chainTabs').children;
+    for (var k = 0; k < tabs.length; k++) {
+      tabs[k].classList.toggle('active', k === i + 1);
+    }
+    if (i >= 0) {
+      blocksChain = i;
+      loadBlocks();
+    }
+  }
+
+  /* ---------- Blok terbaru ---------- */
+  function loadBlocks() {
+    var chain = CHAINS[blocksChain];
+    $('blocksTitle').textContent = 'Blok terbaru — ' + chain.name;
+    var body = $('blocksBody');
+    body.innerHTML = '';
+    var loading = el('tr');
+    var td = el('td', 'muted', 'Memuat…');
+    td.colSpan = 4;
+    loading.appendChild(td);
+    body.appendChild(loading);
+    $('blocksNote').textContent = '';
+    rpc(chain, 'eth_blockNumber', []).then(function (numHex) {
+      var latest = Number(hexToBig(numHex));
+      var jobs = [];
+      for (var n = latest; n > latest - 8 && n >= 0; n--) {
+        jobs.push(rpc(chain, 'eth_getBlockByNumber', ['0x' + n.toString(16), false]));
+      }
+      return Promise.all(jobs);
+    }).then(function (blocks) {
+      body.innerHTML = '';
+      blocks.forEach(function (b) {
+        if (!b) return;
+        var tr = el('tr');
+        var numTd = el('td');
+        numTd.appendChild(hashLink(Number(hexToBig(b.number)).toLocaleString('id-ID'), 'block', b.number, blocksChain));
+        var hashTd = el('td');
+        hashTd.appendChild(hashLink(shortHash(b.hash), 'block', b.number, blocksChain));
+        tr.appendChild(numTd);
+        tr.appendChild(hashTd);
+        tr.appendChild(el('td', null, timeAgo(b.timestamp)));
+        var txTd = el('td', 'num', (b.transactions || []).length.toLocaleString('id-ID'));
+        tr.appendChild(txTd);
+        body.appendChild(tr);
+      });
+      $('blocksNote').textContent = 'Klik nomor blok atau hash untuk melihat detailnya.';
+    }).catch(function () {
+      body.innerHTML = '';
+      var tr = el('tr');
+      var td = el('td', 'error-text', chain.name + ' tidak menjawab. Coba muat ulang.');
+      td.colSpan = 4;
+      tr.appendChild(td);
+      body.appendChild(tr);
+    });
+  }
+
+  /* ---------- Hasil pencarian ---------- */
+  function showResult(title, node) {
+    $('resultTitle').textContent = title;
+    var box = $('resultBox');
+    box.innerHTML = '';
+    box.appendChild(node);
+    $('resultSection').hidden = false;
+    $('resultSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  function searchChains() {
+    return selectedChain >= 0 ? [selectedChain] : CHAINS.map(function (_, i) { return i; });
+  }
+
+  function openResult(kind, value, chainIdx) {
+    if (kind === 'address') return searchAddress(value);
+    if (kind === 'tx') return searchTx(value, chainIdx);
+    if (kind === 'block') return searchBlock(value, chainIdx);
+  }
+
+  function searchAddress(addr) {
+    var panel = el('div', 'panel');
+    panel.appendChild(el('p', 'mono', addr));
+    var grid = el('div', 'bal-grid');
+    panel.appendChild(grid);
+    panel.appendChild(el('p', 'muted', 'Riwayat transaksi belum tersedia di versi ini. Saldo di atas adalah koin asli (native) tiap jaringan.'));
+    showResult('Alamat', panel);
+    searchChains().forEach(function (i) {
+      var chain = CHAINS[i];
+      var card = el('div', 'bal-card');
+      card.appendChild(el('span', 'bal-name', chain.name));
+      var amt = el('div', 'bal-amt loading', 'Memuat…');
+      card.appendChild(amt);
+      grid.appendChild(card);
+      rpc(chain, 'eth_getBalance', [addr, 'latest']).then(function (hex) {
+        amt.className = 'bal-amt';
+        amt.textContent = formatNative(hex) + ' ' + chain.symbol;
+      }).catch(function () {
+        amt.className = 'bal-amt error';
+        amt.textContent = 'Gagal dimuat';
+      });
+    });
+  }
+
+  function txPanel(chain, tx, receipt) {
+    var panel = el('div', 'panel');
+    panel.appendChild(el('p', null, chain.name));
+    var dl = el('dl', 'kv');
+    dl.appendChild(kvRow('Hash', el('span', 'mono', tx.hash)));
+    var status = receipt ? (receipt.status === '0x1' ? el('span', 'status-ok', 'Berhasil') : el('span', 'status-fail', 'Gagal')) : 'Menunggu (belum masuk blok)';
+    dl.appendChild(kvRow('Status', status));
+    if (tx.blockNumber) {
+      dl.appendChild(kvRow('Blok', hashLink(Number(hexToBig(tx.blockNumber)).toLocaleString('id-ID'), 'block', tx.blockNumber, CHAINS.indexOf(chain))));
+    }
+    dl.appendChild(kvRow('Dari', hashLink(tx.from, 'address', tx.from, -1)));
+    dl.appendChild(kvRow('Ke', tx.to ? hashLink(tx.to, 'address', tx.to, -1) : 'Pembuatan kontrak'));
+    dl.appendChild(kvRow('Nilai', formatNative(tx.value) + ' ' + chain.symbol));
+    dl.appendChild(kvRow('Gas limit', Number(hexToBig(tx.gas)).toLocaleString('id-ID')));
+    if (receipt) dl.appendChild(kvRow('Gas terpakai', Number(hexToBig(receipt.gasUsed)).toLocaleString('id-ID')));
+    dl.appendChild(kvRow('Harga gas', formatGwei(tx.gasPrice || tx.maxFeePerGas || '0x0') + ' Gwei'));
+    dl.appendChild(kvRow('Nonce', Number(hexToBig(tx.nonce)).toLocaleString('id-ID')));
+    var input = tx.input || '0x';
+    dl.appendChild(kvRow('Data input', Math.max(0, (input.length - 2) / 2) + ' byte' + (input.length > 66 ? ', diawali ' + input.slice(0, 66) + '…' : input.length > 2 ? ': ' + input : '')));
+    panel.appendChild(dl);
+    return panel;
+  }
+
+  function searchTx(hash, onlyChain) {
+    var holder = el('div');
+    holder.appendChild(el('p', 'muted', 'Memuat…'));
+    showResult('Transaksi', holder);
+    var idxs = (typeof onlyChain === 'number' && onlyChain >= 0) ? [onlyChain] : searchChains();
+    var found = 0, done = 0, failed = 0;
+    holder.innerHTML = '';
+    idxs.forEach(function (i) {
+      var chain = CHAINS[i];
+      rpc(chain, 'eth_getTransactionByHash', [hash]).then(function (tx) {
+        if (!tx) return null;
+        return rpc(chain, 'eth_getTransactionReceipt', [hash]).then(function (rc) {
+          return { tx: tx, receipt: rc };
+        }).catch(function () { return { tx: tx, receipt: null }; });
+      }).then(function (res) {
+        done++;
+        if (res) {
+          found++;
+          holder.appendChild(txPanel(chain, res.tx, res.receipt));
+        }
+        if (done === idxs.length && found === 0) {
+          // Bukan transaksi: coba sebagai hash blok.
+          searchBlockByHash(hash, idxs, holder);
+        }
+      }).catch(function () {
+        done++;
+        failed++;
+        if (done === idxs.length && found === 0 && failed === idxs.length) {
+          holder.appendChild(el('p', 'error-text', 'Semua jaringan yang dicari tidak menjawab. Coba lagi.'));
+        } else if (done === idxs.length && found === 0) {
+          searchBlockByHash(hash, idxs, holder);
+        }
+      });
+    });
+  }
+
+  function searchBlockByHash(hash, idxs, holder) {
+    var done = 0, found = 0;
+    idxs.forEach(function (i) {
+      var chain = CHAINS[i];
+      rpc(chain, 'eth_getBlockByHash', [hash, false]).then(function (b) {
+        done++;
+        if (b) {
+          found++;
+          holder.appendChild(blockPanel(chain, b, i));
+        }
+        if (done === idxs.length && found === 0) {
+          holder.appendChild(el('p', 'muted', 'Tidak ditemukan sebagai transaksi maupun blok di jaringan yang dicari. Periksa kembali hash-nya.'));
+        }
+      }).catch(function () {
+        done++;
+        if (done === idxs.length && found === 0) {
+          holder.appendChild(el('p', 'muted', 'Tidak ditemukan sebagai transaksi maupun blok di jaringan yang dicari. Periksa kembali hash-nya.'));
+        }
+      });
+    });
+  }
+
+  function blockPanel(chain, b, chainIdx) {
+    var panel = el('div', 'panel');
+    panel.appendChild(el('p', null, chain.name));
+    var dl = el('dl', 'kv');
+    dl.appendChild(kvRow('Nomor blok', Number(hexToBig(b.number)).toLocaleString('id-ID')));
+    dl.appendChild(kvRow('Hash', el('span', 'mono', b.hash)));
+    dl.appendChild(kvRow('Blok induk', el('span', 'mono', b.parentHash)));
+    dl.appendChild(kvRow('Waktu', formatTime(b.timestamp) + ' (' + timeAgo(b.timestamp) + ')'));
+    dl.appendChild(kvRow('Validator / miner', el('span', 'mono', b.miner)));
+    dl.appendChild(kvRow('Transaksi', (b.transactions || []).length.toLocaleString('id-ID')));
+    dl.appendChild(kvRow('Gas terpakai', Number(hexToBig(b.gasUsed)).toLocaleString('id-ID') + ' dari ' + Number(hexToBig(b.gasLimit)).toLocaleString('id-ID')));
+    dl.appendChild(kvRow('Ukuran', Number(hexToBig(b.size)).toLocaleString('id-ID') + ' byte'));
+    panel.appendChild(dl);
+    var txs = b.transactions || [];
+    if (txs.length) {
+      panel.appendChild(el('p', null, 'Transaksi di blok ini (maks. 20 pertama):'));
+      var ul = el('ul', 'tx-list');
+      txs.slice(0, 20).forEach(function (h) {
+        var li = el('li');
+        li.appendChild(hashLink(typeof h === 'string' ? h : h.hash, 'tx', typeof h === 'string' ? h : h.hash, chainIdx));
+        ul.appendChild(li);
+      });
+      panel.appendChild(ul);
+    }
+    return panel;
+  }
+
+  function searchBlock(numHex, onlyChain) {
+    var holder = el('div');
+    holder.appendChild(el('p', 'muted', 'Memuat…'));
+    showResult('Blok', holder);
+    var idxs = (typeof onlyChain === 'number' && onlyChain >= 0) ? [onlyChain] : searchChains();
+    var done = 0, found = 0, failed = 0;
+    holder.innerHTML = '';
+    idxs.forEach(function (i) {
+      var chain = CHAINS[i];
+      rpc(chain, 'eth_getBlockByNumber', [numHex, false]).then(function (b) {
+        done++;
+        if (b) {
+          found++;
+          holder.appendChild(blockPanel(chain, b, i));
+        }
+        if (done === idxs.length && found === 0) {
+          holder.appendChild(el('p', 'muted', 'Blok nomor itu belum ada di jaringan yang dicari, atau jaringannya tidak menjawab.'));
+        }
+      }).catch(function () {
+        done++;
+        failed++;
+        if (done === idxs.length && found === 0) {
+          holder.appendChild(el('p', failed === idxs.length ? 'error-text' : 'muted', failed === idxs.length ? 'Semua jaringan yang dicari tidak menjawab. Coba lagi.' : 'Blok nomor itu belum ada di jaringan yang dicari, atau jaringannya tidak menjawab.'));
+        }
+      });
+    });
+  }
+
+  /* ---------- Formulir cari ---------- */
+  $('searchForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var q = $('searchInput').value.trim();
+    if (!q) return;
+    if (/^0x[0-9a-fA-F]{40}$/.test(q)) {
+      searchAddress(q);
+    } else if (/^0x[0-9a-fA-F]{64}$/.test(q)) {
+      searchTx(q);
+    } else if (/^\d+$/.test(q)) {
+      searchBlock('0x' + BigInt(q).toString(16));
+    } else {
+      var p = el('p', 'muted', 'Format tidak dikenali. Masukkan alamat 0x… (40 karakter hex), hash transaksi 0x… (64 karakter hex), atau nomor blok (angka).');
+      showResult('Hasil', p);
+    }
+  });
+
+  $('refreshBlocks').addEventListener('click', loadBlocks);
+  $('year').textContent = new Date().getFullYear();
+  buildTabs();
+  loadBlocks();
+</script>
+</body>
+</html>
