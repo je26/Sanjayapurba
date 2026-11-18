@@ -351,6 +351,9 @@
       }
       .welcome strong { color: var(--ink); font-weight: 700; }
       .welcome .hl { color: var(--gold); font-weight: 700; }
+      .welcome .hl-blue { color: #A8C6EC; }
+      .h-accent { color: var(--gold); text-shadow: 0 1px 8px rgba(0, 0, 0, 0.55); }
+      .h-accent-blue { color: #A8C6EC; text-shadow: 0 1px 8px rgba(0, 0, 0, 0.55); }
       .welcome-note {
         color: var(--ink-soft);
         font-size: 16.5px;
@@ -1002,6 +1005,7 @@
       }
       .home-stats dd { margin: 2px 0 0; color: var(--ink-soft); font-size: 13.5px; }
       .home-stats dt .num { color: var(--gold); }
+      .home-stats > div:nth-child(2) .num { color: #A8C6EC; }
       .home-cards {
         display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;
         margin-top: 12px;
@@ -1014,6 +1018,7 @@
       .home-card h2 { font-size: 16px; margin: 0 0 6px; }
       .home-card p { margin: 0; color: var(--ink-soft); font-size: 14px; }
       .home-card span { display: block; margin-top: 10px; color: var(--gold); font-size: 14px; font-weight: 600; }
+      .home-cards > a:nth-child(2) span { color: #A8C6EC; }
       .home-card.wide { grid-column: 1 / -1; }
       .home-live { margin-top: 28px; }
       .home-live-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
@@ -1090,7 +1095,7 @@
       <!-- Hero -->
       <header id="atas" data-view-panel="home">
         <p class="hero-label">Web builder &amp; SEO practitioner</p>
-        <h1 class="welcome">Dari <strong>Belinyu, Bangka</strong>: saya <span class="hl">bangun website</span> dan <span class="hl">memeriksa keamanan smart contract</span>, dari kode sampai laporannya.</h1>
+        <h1 class="welcome">Dari <strong>Belinyu, Bangka</strong>: saya <span class="hl">bangun website</span> dan <span class="hl hl-blue">memeriksa keamanan smart contract</span>, dari kode sampai laporannya.</h1>
         <p class="welcome-note">Empat tahun melayani nasabah di Bank BRI, lalu pindah ke Web3: deploy contract, testing testnet, dan berburu bug bounty. Semua yang ada di web ini saya kerjakan sendiri, dari menulis kode sampai deploy.</p>
         <p class="hero-cta">
           <a class="cta-btn primary" href="#portfolio">Lihat Portfolio</a>
@@ -1142,7 +1147,7 @@
 
       <!-- Tentang -->
       <section class="reveal" data-view-panel="tentang" aria-labelledby="tentang">
-        <h2 id="tentang">Tentang Saya</h2>
+        <h2 id="tentang">Tentang <span class="h-accent">Saya</span></h2>
         <p>
           Lulusan S1 Sistem Informasi. Empat tahun bekerja sebagai Customer
           Service di Bank BRI, melayani nasabah secara langsung dan bekerja
@@ -1162,7 +1167,7 @@
 
       <!-- Keahlian -->
       <section class="reveal" data-view-panel="tentang" aria-labelledby="keahlian">
-        <h2 id="keahlian">Yang Biasa Saya Kerjakan</h2>
+        <h2 id="keahlian">Yang Biasa <span class="h-accent-blue">Saya Kerjakan</span></h2>
         <ul class="chips">
           <li>Deployment Smart Contract</li>
           <li>Deployment Token di Testnet &amp; Mainnet</li>
@@ -1182,7 +1187,7 @@
 
       <!-- Pengalaman -->
       <section class="reveal" data-view-panel="pengalaman" aria-labelledby="pengalaman">
-        <h2 id="pengalaman">Pengalaman</h2>
+        <h2 id="pengalaman"><span class="h-accent">Pengalaman</span></h2>
         <ul class="exp">
           <li>
             <div class="head">
@@ -1220,7 +1225,7 @@
 
       <!-- Portfolio -->
       <section class="reveal" data-view-panel="portfolio" aria-labelledby="portfolio">
-        <h2 id="portfolio">Portfolio</h2>
+        <h2 id="portfolio"><span class="h-accent-blue">Portfolio</span></h2>
         <div class="porto-grid">
           <div class="porto-card wide">
             <span class="tag">Keamanan</span>
@@ -1278,7 +1283,7 @@
 
       <!-- Bug Bounty -->
       <section class="reveal" data-view-panel="bug-bounty" aria-labelledby="bug-bounty">
-        <h2 id="bug-bounty">Bug Bounty &amp; Riset Keamanan</h2>
+        <h2 id="bug-bounty"><span class="h-accent">Bug Bounty</span> &amp; Riset Keamanan</h2>
         <p>
           Saya mengikuti program bug bounty:
           membaca kode, mencari celah keamanan, dan membuktikannya
@@ -1354,7 +1359,7 @@
 
       <!-- Check Wallet -->
       <section class="reveal" data-view-panel="check-wallet" aria-labelledby="check-wallet">
-        <h2 id="check-wallet">Check Wallet</h2>
+        <h2 id="check-wallet">Check <span class="h-accent-blue">Wallet</span></h2>
         <div id="cwDisconnected">
           <p>
             Tempel alamat wallet untuk melihat saldo koin asli di 7 jaringan
@@ -1386,7 +1391,7 @@
 
       <!-- Game Ular -->
       <section class="reveal" data-view-panel="game" aria-labelledby="game">
-        <h2 id="game">Game Ular</h2>
+        <h2 id="game">Game <span class="h-accent">Ular</span></h2>
         <p>
           Game kecil buat selingan, kendalikan ularnya dan makan bola
           emasnya. Ularnya menembus dinding: keluar di satu sisi, muncul
@@ -1429,7 +1434,7 @@
 
       <!-- Pendidikan -->
       <section class="reveal" data-view-panel="pengalaman" aria-labelledby="pendidikan">
-        <h2 id="pendidikan">Pendidikan</h2>
+        <h2 id="pendidikan"><span class="h-accent-blue">Pendidikan</span></h2>
         <div class="edu-card">
           <h3>S1 Sistem Informasi</h3>
           <p>Lulusan sarjana Sistem Informasi, dasar saya di bidang teknologi informasi.</p>
@@ -1438,7 +1443,7 @@
 
       <!-- Kontak -->
       <section class="reveal" data-view-panel="kontak" aria-labelledby="kontak">
-        <h2 id="kontak">Kontak</h2>
+        <h2 id="kontak"><span class="h-accent">Kontak</span></h2>
         <p>
           Di ekosistem Web3, saya bisa dikenali lewat Binance Agent ID
           <strong>jeje.ai</strong>.
