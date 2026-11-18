@@ -536,32 +536,19 @@
       }
       .table-note { color: var(--ink-soft); font-size: 14.5px; margin-top: 12px; }
 
-      /* Tabel bug bounty di HP: tiap baris jadi susun ke bawah,
-         semua teks kebaca tanpa geser ke samping. */
+      /* Tabel bug bounty di HP: 3 kolom tetap, huruf diperkecil supaya muat. */
       @media (max-width: 640px) {
-        .bounty-table thead { display: none; }
-        .bounty-table,
-        .bounty-table tbody,
-        .bounty-table tfoot,
-        .bounty-table tr,
-        .bounty-table td { display: block; width: auto; }
-        .bounty-table { min-width: 0; font-size: 14px; }
-        .bounty-table tbody tr {
-          padding: 12px 14px;
-          border-bottom: 1px solid var(--line-soft);
-        }
-        .bounty-table tbody tr:last-child { border-bottom: none; }
+        .wrap { padding-left: 16px; padding-right: 16px; }
+        .bounty-table { min-width: 0; font-size: 13px; table-layout: fixed; }
+        .bounty-table th:nth-child(1),
+        .bounty-table td:nth-child(1) { width: 26%; }
+        .bounty-table th:nth-child(2),
+        .bounty-table td:nth-child(2) { width: 36%; }
+        .bounty-table th:nth-child(3),
+        .bounty-table td:nth-child(3) { width: 38%; }
         .bounty-table th,
-        .bounty-table td { padding: 2px 0; border-bottom: none; }
-        .bounty-table tbody td:first-child { font-size: 16px; }
-        .bounty-table tbody td:nth-child(2) { color: var(--ink-soft); }
-        .bounty-table tfoot tr {
-          background: var(--surface-2);
-          border-top: 1px solid var(--line);
-          padding: 12px 14px;
-        }
-        .bounty-table tfoot td { background: transparent; border: none; }
-        .bounty-table tfoot td:last-child { display: none; }
+        .bounty-table td { padding: 9px 7px; }
+        .status-pill { font-size: 11px; padding: 3px 5px; }
       }
 
       .edu-card {
