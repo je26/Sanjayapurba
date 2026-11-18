@@ -970,14 +970,14 @@
          Tanpa JS, body tidak punya data-view sehingga semua bagian
          tetap tampil seperti biasa. */
       body[data-view] [data-view-panel] { display: none; }
-      body[data-view="home"] [data-view-panel="home"],
-      body[data-view="tentang"] [data-view-panel="tentang"],
-      body[data-view="portfolio"] [data-view-panel="portfolio"],
-      body[data-view="bug-bounty"] [data-view-panel="bug-bounty"],
-      body[data-view="pengalaman"] [data-view-panel="pengalaman"],
-      body[data-view="kontak"] [data-view-panel="kontak"],
-      body[data-view="check-wallet"] [data-view-panel="check-wallet"],
-      body[data-view="game"] [data-view-panel="game"] { display: block; }
+      body[data-view="home"] [data-view-panel~="home"],
+      body[data-view="tentang"] [data-view-panel~="tentang"],
+      body[data-view="portfolio"] [data-view-panel~="portfolio"],
+      body[data-view="bug-bounty"] [data-view-panel~="bug-bounty"],
+      body[data-view="pengalaman"] [data-view-panel~="pengalaman"],
+      body[data-view="kontak"] [data-view-panel~="kontak"],
+      body[data-view="check-wallet"] [data-view-panel~="check-wallet"],
+      body[data-view="game"] [data-view-panel~="game"] { display: block; }
       .nav-links a.active { color: var(--accent); }
       .home-stats {
         display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
@@ -1138,7 +1138,7 @@
       </section>
 
       <!-- Pengalaman -->
-      <section class="reveal" data-view-panel="pengalaman" aria-labelledby="pengalaman">
+      <section class="reveal" data-view-panel="pengalaman home" aria-labelledby="pengalaman">
         <h2 id="pengalaman">Pengalaman</h2>
         <ul class="exp">
           <li>
