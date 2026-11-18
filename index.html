@@ -1011,6 +1011,7 @@
       .home-card h2 { font-size: 16px; margin: 0 0 6px; }
       .home-card p { margin: 0; color: var(--ink-soft); font-size: 14px; }
       .home-card span { display: block; margin-top: 10px; color: #e5484d; font-size: 14px; font-weight: 600; }
+      .home-card.wide { grid-column: 1 / -1; }
       @media (max-width: 680px) {
         .home-stats, .home-cards { grid-template-columns: 1fr; }
       }
@@ -1105,6 +1106,11 @@
             <h2>Game Ular</h2>
             <p>Ularnya menembus dinding. Kalah hanya kalau menabrak badan sendiri.</p>
             <span>Main &rarr;</span>
+          </a>
+          <a class="home-card wide" href="/explorer/">
+            <h2>Sanjaya Explorer</h2>
+            <p>Cari alamat, transaksi, dan blok di 7 jaringan EVM, langsung dari RPC publik.</p>
+            <span>Buka explorer &rarr;</span>
           </a>
         </div>
       </header>
